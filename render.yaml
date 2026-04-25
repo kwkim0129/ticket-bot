@@ -1,0 +1,7 @@
+services:
+  - type: worker
+    name: jeju-ticket-bot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    plan: free
