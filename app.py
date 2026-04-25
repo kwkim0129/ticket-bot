@@ -29,6 +29,7 @@ def send_kakao(message):
 
 def check_ticket():
     global last_alert_sent
+    send_kakao("✅ 테스트 메시지") 
     try:
         r = requests.get(URL, headers=USER_AGENT, timeout=20)
         html = r.text
