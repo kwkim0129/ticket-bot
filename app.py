@@ -30,21 +30,23 @@ def build_flight_url(depart, arrive, depart_date, return_date=None):
 
     return base + path + query
 
+import json
+
 def send_kakao(message, link_url):
     api = 'https://kapi.kakao.com/v2/api/talk/memo/default/send'
     headers = {'Authorization': f'Bearer {KAKAO_TOKEN}'}
 
+    template = {
+        "object_type": "text",
+        "text": message,
+        "link": {
+            "web_url": link_url,
+            "mobile_web_url": link_url
+        }
+    }
+
     data = {
-        'template_object': f'''
-        {{
-            "object_type": "text",
-            "text": "{message}",
-            "link": {{
-                "web_url": "{link_url}",
-                "mobile_web_url": "{link_url}"
-            }}
-        }}
-        '''
+        "template_object": json.dumps(template)
     }
 
     r = requests.post(api, headers=headers, data=data)
