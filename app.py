@@ -18,18 +18,40 @@ last_alert_sent = False
 def home():
     return "Jeju ticket bot running"
 
-def send_kakao(message):
+def build_flight_url(depart, arrive, depart_date, return_date=None):
+    base = "https://flight.naver.com/flights/"
+
+    if return_date:
+        path = f"{depart}:city-{arrive}:airport-{depart_date}/{arrive}:airport-{depart}:city-{return_date}"
+    else:
+        path = f"{depart}:city-{arrive}:airport-{depart_date}"
+
+    query = "?adult=1&fareType=YC&isDirect=false"
+
+    return base + path + query
+
+def send_kakao(message, link_url):
     api = 'https://kapi.kakao.com/v2/api/talk/memo/default/send'
     headers = {'Authorization': f'Bearer {KAKAO_TOKEN}'}
+
     data = {
-        'template_object': '{"object_type":"text","text":"' + message + '","link":{"web_url":"' + URL + '"}}'
+        'template_object': f'''
+        {{
+            "object_type": "text",
+            "text": "{message}",
+            "link": {{
+                "web_url": "{link_url}",
+                "mobile_web_url": "{link_url}"
+            }}
+        }}
+        '''
     }
+
     r = requests.post(api, headers=headers, data=data)
     print(r.text)
 
 def check_ticket():
     global last_alert_sent
-    send_kakao("✅ 테스트 메시지") 
     try:
         r = requests.get(URL, headers=USER_AGENT, timeout=20)
         html = r.text
@@ -40,7 +62,12 @@ def check_ticket():
         print("Checked:", available)
 
         if available and not last_alert_sent:
-            send_kakao("🚨 김포→제주 취소표 가능성 발견!")
+            url = build_flight_url("SEL", "CJU", "20260524", "20260526")
+
+            send_kakao(
+                "🚨 김포→제주 취소표 가능성 발견! 지금 확인하세요",
+                url
+            )
             last_alert_sent = True
 
         if not available:
@@ -52,8 +79,6 @@ def check_ticket():
 def bot_loop():
     schedule.every(CHECK_MINUTES).minutes.do(check_ticket)
     check_ticket()
-        
-    send_kakao("✅ 테스트 메시지") # test 
     
     while True:
         schedule.run_pending()
