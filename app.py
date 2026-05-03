@@ -52,7 +52,9 @@ def check_ticket():
 def bot_loop():
     schedule.every(CHECK_MINUTES).minutes.do(check_ticket)
     check_ticket()
-
+        
+    send_kakao("✅ 테스트 메시지") # test 
+    
     while True:
         schedule.run_pending()
         time.sleep(1)
