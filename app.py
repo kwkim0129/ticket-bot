@@ -12,7 +12,7 @@ URL = 'https://flight.naver.com/flights/domestic/GMP:airport-CJU:airport-2026043
 
 DEPART = "GMP"   # 김포
 ARRIVE = "CJU"   # 제주
-DEPART_DATE = datetime.now().strftime("%Y%m%d") # today 
+DEPART_DATE = "20260503" # today 
 RETURN_DATE = None   # 왕복이면 "20260502"
 
 USER_AGENT = {'User-Agent': 'Mozilla/5.0'}
