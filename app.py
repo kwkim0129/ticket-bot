@@ -73,7 +73,7 @@ def check_ticket():
         print("Checked:", available)
 
         if available and not last_alert_sent:
-            url = build_flight_url("SEL", "CJU", "20260524", "20260526")
+            notify_url = build_flight_url(DEPART, ARRIVE, DEPART_DATE, RETURN_DATE)
 
             send_kakao(
                 "🚨 김포→제주 취소표 가능성 발견! 지금 확인하세요",
