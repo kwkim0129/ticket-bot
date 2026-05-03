@@ -62,7 +62,7 @@ def send_kakao(message, link_url):
 def check_ticket():
     global last_alert_sent
     try:
-        check_url = build_check_url(DEPART, ARRIVE, DEPART_DATE)
+        check_url = build_flight_url(DEPART, ARRIVE, DEPART_DATE, RETURN_DATE)
         r = requests.get(check_url, headers=USER_AGENT, timeout=20)
         html = r.text
 
