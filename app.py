@@ -8,6 +8,12 @@ from flask import Flask
 app = Flask(__name__)
 
 URL = 'https://flight.naver.com/flights/domestic/GMP:airport-CJU:airport-20260430?adult=1&fareType=YC'
+
+DEPART = "GMP"   # 김포
+ARRIVE = "CJU"   # 제주
+DEPART_DATE = datetime.now().strftime("%Y%m%d") # today 
+RETURN_DATE = None   # 왕복이면 "20260502"
+
 USER_AGENT = {'User-Agent': 'Mozilla/5.0'}
 KAKAO_TOKEN = os.getenv('KAKAO_TOKEN')
 CHECK_MINUTES = int(os.getenv('CHECK_MINUTES', '2'))
@@ -55,8 +61,10 @@ def send_kakao(message, link_url):
 def check_ticket():
     global last_alert_sent
     try:
-        r = requests.get(URL, headers=USER_AGENT, timeout=20)
+        check_url = build_check_url(DEPART, ARRIVE, DEPART_DATE)
+        r = requests.get(check_url, headers=USER_AGENT, timeout=20)
         html = r.text
+
 
         soldout_keywords = ['매진', '예약마감']
         available = not any(x in html for x in soldout_keywords)
@@ -68,7 +76,7 @@ def check_ticket():
 
             send_kakao(
                 "🚨 김포→제주 취소표 가능성 발견! 지금 확인하세요",
-                url
+                notify_url
             )
             last_alert_sent = True
 
